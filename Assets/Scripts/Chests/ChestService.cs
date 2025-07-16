@@ -1,18 +1,24 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class ChestService : MonoBehaviour
+namespace ChestSystem.Chests
 {
-    // Start is called before the first frame update
-    void Start()
+    public class ChestService
     {
-        
-    }
+        private List<ChestController> activeChests = new List<ChestController>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public ChestController CreateChest(ChestScriptableObject chestData)
+        {
+            var controller = new ChestController(chestData);
+            activeChests.Add(controller);
+            return controller;
+        }
+
+        public void UpdateAllChests()
+        {
+            foreach (var chest in activeChests)
+                chest.UpdateState();
+        }
+
+        public List<ChestController> GetActiveChests() => activeChests;
     }
 }
