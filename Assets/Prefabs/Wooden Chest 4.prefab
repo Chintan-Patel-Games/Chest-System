@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3497779309189542615}
   - component: {fileID: 5112698450311241079}
   - component: {fileID: 1895723406039911792}
+  - component: {fileID: -5959212536367029550}
   m_Layer: 0
   m_Name: Wooden Chest 4
   m_TagString: Untagged
@@ -106,3 +107,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5959212536367029550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4678546083268974488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40337eb644943d841bb402c91d2b862c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chestData: {fileID: 11400000, guid: 1c447bbbe7d1959468b3765b23b22759, type: 2}
+  chestGraphic: {fileID: 5112698450311241079}
+  chestAnimator: {fileID: 1895723406039911792}

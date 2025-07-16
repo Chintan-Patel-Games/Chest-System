@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b22c1444f23dfe499de77847720dbb8, type: 3}
   m_Name: Epic Chest
   m_EditorClassIdentifier: 
-  chestName: Epic Chest
-  chestPrefab: {fileID: 1789004577967638998, guid: 538e76be111bb1a4ca1b338762d53a8b, type: 3}
+  chestPrefab: {fileID: 6713226708396805414, guid: 538e76be111bb1a4ca1b338762d53a8b, type: 3}
   chestType: 1
-  unlockTimer: 30
+  unlockDurationMinutes: 30
+  coinMin: 300
+  coinMax: 500
+  gemMin: 20
+  gemMax: 40

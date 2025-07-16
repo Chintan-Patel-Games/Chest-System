@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b22c1444f23dfe499de77847720dbb8, type: 3}
   m_Name: Legendary Chest
   m_EditorClassIdentifier: 
-  chestName: Legendary Chest
-  chestPrefab: {fileID: 4678546083268974488, guid: bea288b051a4a4b4cb5a3d952f87754b, type: 3}
+  chestPrefab: {fileID: -5959212536367029550, guid: bea288b051a4a4b4cb5a3d952f87754b, type: 3}
   chestType: 3
-  unlockTimer: 180
+  unlockDurationMinutes: 180
+  coinMin: 1000
+  coinMax: 1200
+  gemMin: 80
+  gemMax: 100

@@ -5,10 +5,12 @@ namespace ChestSystem.Chests
     [CreateAssetMenu(fileName = "ChestScriptableObject", menuName = "ScriptableObjects/ChestScriptableObject")]
     public class ChestScriptableObject : ScriptableObject
     {
-        public string chestName;
-        public GameObject chestPrefab;
+        public ChestView chestPrefab;
         public ChestType chestType;
-        public ChestUnlockTimer unlockTimer;
-        public AnimatorOverrideController chestAnimator;
+        public ChestUnlockTimer unlockDurationMinutes;
+        public int coinMin;
+        public int coinMax;
+        public int gemMin;
+        public int gemMax;
     }
 }
