@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b22c1444f23dfe499de77847720dbb8, type: 3}
   m_Name: Common Chest
   m_EditorClassIdentifier: 
-  chestPrefab: {fileID: -4078207659276716386, guid: d2fbd88361b009243903a14d0aae104b, type: 3}
+  chestSprite: {fileID: 21300000, guid: 952326841b2574044b1a9a84e17482d0, type: 3}
+  animatorController: {fileID: 22100000, guid: 08e8a23afb642554d91c39126155433c, type: 2}
   chestType: 0
   unlockDurationMinutes: 15
-  coinMin: 100
-  coinMax: 200
-  gemMin: 10
-  gemMax: 20
+  coins:
+    min: 100
+    max: 200
+  gems:
+    min: 10
+    max: 20

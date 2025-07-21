@@ -5,9 +5,9 @@ namespace ChestSystem.Chests
     /// </summary>
     public enum ChestUnlockTimer
     {
-        Fifteen = 15,
-        Thirty = 30,
-        Sixty = 60,
-        OneEighty = 180
+        FIFTEEN = 15,
+        THIRTY = 30,
+        SIXTY = 60,
+        ONEEIGHTY = 180
     }
 }
