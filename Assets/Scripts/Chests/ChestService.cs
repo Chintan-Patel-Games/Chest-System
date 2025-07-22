@@ -4,11 +4,11 @@ namespace ChestSystem.Chests
 {
     public class ChestService
     {
-        private List<ChestController> activeChests = new List<ChestController>();
+        private List<ChestController> activeChests = new();
 
-        public ChestController CreateChest(ChestScriptableObject chestData)
+        public ChestController CreateChest(ChestScriptableObject chestData, ChestView chestView)
         {
-            var controller = new ChestController(chestData);
+            var controller = new ChestController(chestData, chestView);
             activeChests.Add(controller);
             return controller;
         }

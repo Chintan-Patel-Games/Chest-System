@@ -16,13 +16,15 @@ namespace ChestSystem.Chests
         [System.Serializable]
         public struct CoinsRange
         {
-            public int min, max;
+            public int min;
+            public int max;
         }
 
         [System.Serializable]
         public struct GemsRange
         {
-            public int min, max;
+            public int min;
+            public int max;
         }
     }
 }

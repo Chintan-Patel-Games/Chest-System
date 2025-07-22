@@ -1,70 +1,51 @@
-using ChestSystem.Utilities;
+using ChestSystem.Chests.States;
+using ChestSystem.Chests.States.ConcreateStates;
 using System;
 
 namespace ChestSystem.Chests
 {
     public class ChestController
     {
+        private ChestBaseState currentState;
         private ChestScriptableObject chestData;
-        private ChestState currentState;
+        private ChestView chestView;
         private DateTime unlockStartTime;
 
-        public ChestController(ChestScriptableObject data)
+        public ChestController(ChestScriptableObject data, ChestView view)
         {
             chestData = data;
-            currentState = ChestState.LOCKED;
+            chestView = view;
+            SetState(new LockedChestState(this));
         }
 
-        public void OnChestClicked()
+        public void SetState(ChestBaseState newState)
         {
-            switch (currentState)
-            {
-                case ChestState.LOCKED:
-                    StartUnlocking();
-                    break;
-                case ChestState.UNLOCKED:
-                    CollectChest();
-                    break;
-            }
+            currentState = newState;
+            currentState.EnterState();
         }
+
+        public void OnChestClicked() => currentState.OnChestClicked();
+
+        public void UpdateState() => currentState.UpdateState();
 
         public void StartUnlocking()
         {
-            if (currentState != ChestState.LOCKED) return;
-
-            currentState = ChestState.UNLOCKING;
             unlockStartTime = DateTime.UtcNow;
+            SetState(new UnlockingChestState(this));
         }
 
         public void CollectChest()
         {
-            if (currentState == ChestState.UNLOCKED)
-            {
-                currentState = ChestState.OPENED;
-                // TODO: Grant rewards
-            }
+            chestView.PlayOpenAnimation();
+            // Grant rewards, etc.
+            SetState(new OpenedChestState(this));
         }
 
-        public void UpdateState()
+        public bool HasUnlockTimePassed()
         {
-            if (currentState == ChestState.UNLOCKING)
-            {
-                TimeSpan elapsed = DateTime.UtcNow - unlockStartTime;
-                if (elapsed.TotalMinutes >= ConvertUnlockTimerinMinutes(chestData.unlockDurationMinutes))
-                    currentState = ChestState.UNLOCKED;
-            }
+            var elapsed = DateTime.UtcNow - unlockStartTime;
+            return elapsed.TotalMinutes >= ConvertUnlockTimerinMinutes(chestData.unlockDurationMinutes);
         }
-
-        public string GetRemainingTimeFormatted()
-        {
-            TimeSpan remaining = TimeSpan.FromMinutes(ConvertUnlockTimerinMinutes(chestData.unlockDurationMinutes)) - (DateTime.UtcNow - unlockStartTime);
-            if (remaining.TotalSeconds < 0) return StringConstants.ZeroTimer;
-            return StringConstants.GetFormattedRemainingTime(remaining);
-        }
-
-        public ChestScriptableObject GetChestData() => chestData;
-
-        public ChestState GetChestState() => currentState;
 
         private int ConvertUnlockTimerinMinutes(ChestUnlockTimer chestUnlockTimer) => (int)chestUnlockTimer;
     }

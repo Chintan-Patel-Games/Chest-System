@@ -1,11 +1,15 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ChestSystem.Chests
 {
     public class ChestSlotView : MonoBehaviour
     {
         [SerializeField] private ChestView chestView;
+        [SerializeField] private List<Image> bgImg;
+        [SerializeField] private List<Image> pressebgImg;
         [SerializeField] private TextMeshProUGUI lockedText;
         [SerializeField] private TextMeshProUGUI unlockedText;
         [SerializeField] private TextMeshProUGUI emptyText;
