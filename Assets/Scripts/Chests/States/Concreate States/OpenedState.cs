@@ -5,5 +5,10 @@ public class OpenedChestState : ChestBaseState
 {
     public OpenedChestState(ChestController controller) : base(controller) { }
 
-    // No interaction here
+    //public override void EnterState() => controller.OnChestOpened.InvokeEvent(null);
+
+    public override void OnChestClicked()
+    {
+        // Chest already opened – maybe show rewards again or hide UI
+    }
 }

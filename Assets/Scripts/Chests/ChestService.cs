@@ -1,24 +1,52 @@
+using ChestSystem.Chests.ChestSlot;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ChestSystem.Chests
 {
     public class ChestService
     {
-        private List<ChestController> activeChests = new();
+        private Dictionary<ChestType, ChestScriptableObject> chestDatabase;
+        private ChestSlotPool slotPool;
+        private ChestView chestPrefab;
 
-        public ChestController CreateChest(ChestScriptableObject chestData, ChestView chestView)
+        public ChestService(ChestSlotView chestSlotPrefab, Transform slotPoolTransform, ChestView chestPrefab)
         {
-            var controller = new ChestController(chestData, chestView);
-            activeChests.Add(controller);
-            return controller;
+            slotPool = new ChestSlotPool(chestSlotPrefab, slotPoolTransform);
+            this.chestPrefab = chestPrefab;
+
+            LoadChestDatabase();
         }
 
-        public void UpdateAllChests()
+        private void LoadChestDatabase()
         {
-            foreach (var chest in activeChests)
-                chest.UpdateState();
+            chestDatabase = new Dictionary<ChestType, ChestScriptableObject>();
+            var allSO = Resources.LoadAll<ChestScriptableObject>("Chests"); // Put all ChestSO in Resources/ChestData
+            foreach (var so in allSO)
+                chestDatabase[so.chestType] = so;
         }
 
-        public List<ChestController> GetActiveChests() => activeChests;
+        public void GenerateChest()
+        {
+            var emptySlot = slotPool.GetFirstEmptySlot();
+            if (emptySlot == null)
+            {
+                Debug.LogWarning("No empty chest slot available!");
+                return;
+            }
+
+            // Randomly pick a chest type
+            ChestType randomType = GetRandomChestType();
+            ChestScriptableObject chestData = chestDatabase[randomType];
+
+            // Assign to slot
+            emptySlot.AssignChest(chestData, chestPrefab);
+        }
+
+        private ChestType GetRandomChestType()
+        {
+            var values = (ChestType[])System.Enum.GetValues(typeof(ChestType));
+            return values[Random.Range(0, values.Length)];
+        }
     }
 }

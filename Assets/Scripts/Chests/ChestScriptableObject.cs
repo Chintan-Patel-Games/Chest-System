@@ -7,21 +7,15 @@ namespace ChestSystem.Chests
     {
         public Sprite chestSprite;
         public RuntimeAnimatorController animatorController;
+
         public ChestType chestType;
         public ChestUnlockTimer unlockDurationMinutes;
 
-        public CoinsRange coins;
-        public GemsRange gems;
+        public RewardRange coins;
+        public RewardRange gems;
 
         [System.Serializable]
-        public struct CoinsRange
-        {
-            public int min;
-            public int max;
-        }
-
-        [System.Serializable]
-        public struct GemsRange
+        public struct RewardRange
         {
             public int min;
             public int max;

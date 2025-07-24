@@ -1,5 +1,6 @@
 using ChestSystem.Chests.States;
 using ChestSystem.Chests.States.ConcreateStates;
+using ChestSystem.Main;
 using System;
 
 namespace ChestSystem.Chests
@@ -11,11 +12,13 @@ namespace ChestSystem.Chests
         private ChestView chestView;
         private DateTime unlockStartTime;
 
-        public ChestController(ChestScriptableObject data, ChestView view)
+        public ChestController(ChestScriptableObject chestData, ChestView chestView)
         {
-            chestData = data;
-            chestView = view;
-            SetState(new LockedChestState(this));
+            this.chestData = chestData;
+            this.chestView = chestView;
+
+            chestView.Initialize(chestData);
+            chestView.ResetToLocked();
         }
 
         public void SetState(ChestBaseState newState)
@@ -34,6 +37,8 @@ namespace ChestSystem.Chests
             SetState(new UnlockingChestState(this));
         }
 
+        public void NotifyChestReady(Object obj) => GameService.Instance.EventService.OnChestReadyToOpen.InvokeEvent(null);
+
         public void CollectChest()
         {
             chestView.PlayOpenAnimation();
@@ -48,5 +53,9 @@ namespace ChestSystem.Chests
         }
 
         private int ConvertUnlockTimerinMinutes(ChestUnlockTimer chestUnlockTimer) => (int)chestUnlockTimer;
+
+        public ChestScriptableObject GetChestData() => chestData;
+
+        public ChestView GetChestPrefab() => chestView;
     }
 }

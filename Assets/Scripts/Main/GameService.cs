@@ -1,25 +1,31 @@
+using ChestSystem.Events;
 using ChestSystem.Chests;
+using ChestSystem.UI;
+using ChestSystem.Utilities;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ChestSystem.Main
 {
-    public class GameService : MonoBehaviour
+    public class GameService : GenericMonoSingleton<GameService>
     {
-        [SerializeField] private Transform chestSlotParent;
-        [SerializeField] private ChestView chestViewPrefab;
-        [SerializeField] private List<ChestScriptableObject> chestTypes;
+        // Services:
+        public EventService EventService { get; private set; }
+        public ChestService ChestService { get; private set; }
 
-        private ChestService chestService;
+        [SerializeField] private UIService uiService;
+        public UIService UIService => uiService;
 
-        private void Awake()
+        [SerializeField] private ChestSlotView chestSlotPrefab;
+        [SerializeField] private ChestView chestPrefab;
+        [SerializeField] private Transform chestSlotTransform;
+        [SerializeField] private List<ChestScriptableObject> chestSOs;
+
+        protected override void Awake()
         {
-            chestService = new ChestService();
-        }
-
-        private void Update()
-        {
-            chestService.UpdateAllChests(); // or drive it on timer/coroutine
+            base.Awake();
+            EventService = new EventService();
+            ChestService = new ChestService(chestSlotPrefab, chestSlotTransform, chestPrefab);
         }
     }
 }

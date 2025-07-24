@@ -7,7 +7,15 @@ namespace ChestSystem.Chests.States.ConcreateStates
         public override void UpdateState()
         {
             if (controller.HasUnlockTimePassed())
+            {
                 controller.SetState(new UnlockedChestState(controller));
+                //controller.OnChestReadyToOpen.InvokeEvent(null);
+            }
+        }
+
+        public override void OnChestClicked()
+        {
+            // Optionally show timer progress or locked message
         }
     }
 }
