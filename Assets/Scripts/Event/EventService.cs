@@ -1,20 +1,22 @@
-using ChestSystem.Chests.States;
+using ChestSystem.Chests.ChestSlot;
 
 namespace ChestSystem.Events
 {
     public class EventService
     {
-        public EventController<object> OnGenerateChest { get; private set; }
-        public EventController<ChestState> OnChestStateChanged { get; private set; }
-        public EventController<object> OnChestReadyToOpen { get; private set; }
-        public EventController<object> OnChestOpened { get; private set; }
+        public EventController OnGenerateChest { get; private set; }
+        public EventController<ChestSlotController> OnUnlockWithTimer { get; private set; }
+        public EventController<ChestSlotController> OnUnlockWithGems { get; private set; }
+        public EventController OnUnlockStarted { get; private set; }
+        public EventController OnChestReadyToOpen { get; private set; }
 
         public EventService()
         {
-            OnGenerateChest = new EventController<object>();
-            OnChestStateChanged = new EventController<ChestState>();
-            OnChestReadyToOpen = new EventController<object>();
-            OnChestOpened = new EventController<object>();
+            OnGenerateChest = new EventController();
+            OnUnlockWithTimer = new EventController<ChestSlotController>();
+            OnUnlockWithGems = new EventController<ChestSlotController>();
+            OnUnlockStarted = new EventController();
+            OnChestReadyToOpen = new EventController();
         }
     }
 }

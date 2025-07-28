@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ChestSystem.UI
+namespace ChestSystem.UI.GameplayUI
 {
     public class GameplayUIView : MonoBehaviour, IUIView
     {
@@ -17,8 +17,8 @@ namespace ChestSystem.UI
 
         private void SubscribeToButtonClicks() => generateChestButton.onClick.AddListener(controller.OnGenerateChestClicked);
 
-        public void DisableView() => gameObject.SetActive(false);
-
         public void EnableView() => gameObject.SetActive(true);
+
+        public void DisableView() => gameObject.SetActive(false);
     }
 }

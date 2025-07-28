@@ -1,3 +1,4 @@
+using ChestSystem.Main;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,39 +6,39 @@ namespace ChestSystem.Chests.ChestSlot
 {
     public class ChestSlotPool
     {
-        private List<ChestSlotView> slotList = new();
-        private Transform parentTransform;
-        private ChestSlotView slotPrefab;
+        private List<ChestSlotController> slotList;
+        private int maxSlots = 4; // Maximum number of slots
 
-        public ChestSlotPool(ChestSlotView slotPrefab, Transform parentTransform, int initialSize = 5)
+        public ChestSlotPool()
         {
-            this.slotPrefab = slotPrefab;
-            this.parentTransform = parentTransform;
+            slotList = new List<ChestSlotController>();
 
-            for (int i = 0; i < 4; i++)
-                AddNewSlot();
+            for (int i = 0; i < maxSlots; i++)
+            {
+                ChestSlotView view = GameService.Instance.UIService.AddNewSlot();
+                ChestSlotController controller = new ChestSlotController(view);
+                view.SetController(controller);
+                slotList.Add(controller);
+            }
         }
 
-        private void AddNewSlot()
+        public void AssignChest(List<ChestSO> chestList)
         {
-            ChestSlotView slot = GameObject.Instantiate(slotPrefab, parentTransform);
-            slot.SetEmptyState();
-            slotList.Add(slot);
+            ChestSO randomChest = GetRandomChest(chestList);
+
+            ChestSlotController emptySlot = GetFirstEmptySlot();
+            if (emptySlot != null)
+                emptySlot.AssignChest(randomChest);
         }
 
-        /// <summary>
-        /// Finds the first available (empty) slot.
-        /// </summary>
-        public ChestSlotView GetFirstEmptySlot()
+        private ChestSlotController GetFirstEmptySlot()
         {
             foreach (var slot in slotList)
-            {
                 if (slot.IsEmpty()) return slot;
-            }
 
             return null; // No available slot
         }
 
-        public List<ChestSlotView> GetAllSlots() => slotList;
+        private ChestSO GetRandomChest(List<ChestSO> chests) => chests[Random.Range(0, chests.Count)];
     }
 }

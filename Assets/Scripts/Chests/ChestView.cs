@@ -9,7 +9,7 @@ namespace ChestSystem.Chests
         [SerializeField] private Image chestImage;
         [SerializeField] private Animator chestAnimator;
 
-        public void Initialize(ChestScriptableObject data)
+        public void Initialize(ChestSO data)
         {
             chestImage.sprite = data.chestSprite;
             chestAnimator.runtimeAnimatorController = data.animatorController;
@@ -17,7 +17,7 @@ namespace ChestSystem.Chests
 
         public void PlayOpenAnimation() => SetAnimationBool(true);
 
-        public void ResetToLocked() => SetAnimationBool(false);
+        public void PlayLockAnimation() => SetAnimationBool(false);
 
         private void SetAnimationBool(bool isOpen) => chestAnimator.SetBool(StringConstants.OpenAnimParam, isOpen);
     }
