@@ -1,3 +1,4 @@
+using ChestSystem.Chests.States.ConcreateStates;
 using ChestSystem.Main;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace ChestSystem.Chests.ChestSlot
     public class ChestSlotPool
     {
         private List<ChestSlotController> slotList;
+        private ChestSlotController controller;
         private int maxSlots = 4; // Maximum number of slots
 
         public ChestSlotPool()
@@ -16,7 +18,7 @@ namespace ChestSystem.Chests.ChestSlot
             for (int i = 0; i < maxSlots; i++)
             {
                 ChestSlotView view = GameService.Instance.UIService.AddNewSlot();
-                ChestSlotController controller = new ChestSlotController(view);
+                controller = new ChestSlotController(view);
                 view.SetController(controller);
                 slotList.Add(controller);
             }
@@ -31,6 +33,19 @@ namespace ChestSystem.Chests.ChestSlot
                 emptySlot.AssignChest(randomChest);
         }
 
+        public void UpdateChestSlots()
+        {
+            foreach (var slot in slotList)
+                slot.UpdateState();
+        }
+
+        public bool CanUnlockChest()
+        {
+            foreach (var slot in slotList)
+                if (slot.GetCurrentState() is UnlockingChestState) return false;
+            return true;
+        }
+
         private ChestSlotController GetFirstEmptySlot()
         {
             foreach (var slot in slotList)
@@ -40,5 +55,7 @@ namespace ChestSystem.Chests.ChestSlot
         }
 
         private ChestSO GetRandomChest(List<ChestSO> chests) => chests[Random.Range(0, chests.Count)];
+
+        ~ChestSlotPool() => slotList.Clear();
     }
 }

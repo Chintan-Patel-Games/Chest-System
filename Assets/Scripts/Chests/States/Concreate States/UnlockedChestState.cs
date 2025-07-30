@@ -1,4 +1,5 @@
 using ChestSystem.Chests.ChestSlot;
+using ChestSystem.Main;
 
 namespace ChestSystem.Chests.States.ConcreateStates
 {
@@ -8,6 +9,10 @@ namespace ChestSystem.Chests.States.ConcreateStates
 
         public override void EnterState() => controller.SlotUnlockedState();
 
-        public override void OnChestClicked() => controller.CollectChest();
+        public override void OnChestClicked()
+        {
+            GameService.Instance.UIService.SetTargetSlotForCollect(controller);
+            GameService.Instance.UIService.ShowCollectChestPopupUI();
+        }
     }
 }

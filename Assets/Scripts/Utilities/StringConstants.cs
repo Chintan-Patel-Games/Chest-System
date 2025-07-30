@@ -13,6 +13,9 @@ namespace ChestSystem.Utilities
 
         public const string ZeroTimer = "00:00:00";
 
+        public const string UnlockChestWarning = "Can only unlock one chest at a time!";
+        public const string NotEnoughGemsWarning = "Not enough gems to unlock this chest!";
+
         public static string GetFormattedRemainingTimeMinutes(TimeSpan remaining) =>
             string.Format("{0:D2}:00", remaining.Minutes);
         public static string GetFormattedRemainingTimeHours(TimeSpan remaining) =>

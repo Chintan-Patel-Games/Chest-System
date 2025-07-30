@@ -26,6 +26,10 @@ namespace ChestSystem.Chests
 
         private void GenerateChest() => chestSlotPool.AssignChest(chestDatabase);
 
+        public void UpdateChest() => chestSlotPool.UpdateChestSlots();
+
+        public bool CanUnlockChest => chestSlotPool.CanUnlockChest();
+
         ~ChestService()
         {
             UnSubscribeToEvents();
