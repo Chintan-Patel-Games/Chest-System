@@ -1,4 +1,5 @@
 using ChestSystem.Chests.ChestSlot;
+using ChestSystem.Main;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,47 +7,29 @@ namespace ChestSystem.Chests
 {
     public class ChestService
     {
-        private Dictionary<ChestType, ChestScriptableObject> chestDatabase;
-        private ChestSlotPool slotPool;
-        private ChestView chestPrefab;
+        private List<ChestSO> chestDatabase;
+        private ChestSlotPool chestSlotPool;
 
-        public ChestService(ChestSlotView chestSlotPrefab, Transform slotPoolTransform, ChestView chestPrefab)
+        public ChestService()
         {
-            slotPool = new ChestSlotPool(chestSlotPrefab, slotPoolTransform);
-            this.chestPrefab = chestPrefab;
-
             LoadChestDatabase();
+            SubscribeToEvents();
         }
 
-        private void LoadChestDatabase()
+        public void Initialize() => chestSlotPool = new ChestSlotPool();
+
+        private void SubscribeToEvents() => GameService.Instance.EventService.OnGenerateChest.AddListener(GenerateChest);
+
+        private void UnSubscribeToEvents() => GameService.Instance.EventService.OnGenerateChest.RemoveListener(GenerateChest);
+
+        private void LoadChestDatabase() => chestDatabase = new List<ChestSO>(Resources.LoadAll<ChestSO>("Chests"));
+
+        private void GenerateChest() => chestSlotPool.AssignChest(chestDatabase);
+
+        ~ChestService()
         {
-            chestDatabase = new Dictionary<ChestType, ChestScriptableObject>();
-            var allSO = Resources.LoadAll<ChestScriptableObject>("Chests"); // Put all ChestSO in Resources/ChestData
-            foreach (var so in allSO)
-                chestDatabase[so.chestType] = so;
-        }
-
-        public void GenerateChest()
-        {
-            var emptySlot = slotPool.GetFirstEmptySlot();
-            if (emptySlot == null)
-            {
-                Debug.LogWarning("No empty chest slot available!");
-                return;
-            }
-
-            // Randomly pick a chest type
-            ChestType randomType = GetRandomChestType();
-            ChestScriptableObject chestData = chestDatabase[randomType];
-
-            // Assign to slot
-            emptySlot.AssignChest(chestData, chestPrefab);
-        }
-
-        private ChestType GetRandomChestType()
-        {
-            var values = (ChestType[])System.Enum.GetValues(typeof(ChestType));
-            return values[Random.Range(0, values.Length)];
+            UnSubscribeToEvents();
+            chestDatabase.Clear();
         }
     }
 }

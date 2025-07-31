@@ -3,7 +3,7 @@ using UnityEngine;
 namespace ChestSystem.Chests
 {
     [CreateAssetMenu(fileName = "ChestScriptableObject", menuName = "ScriptableObjects/ChestScriptableObject")]
-    public class ChestScriptableObject : ScriptableObject
+    public class ChestSO : ScriptableObject
     {
         public Sprite chestSprite;
         public RuntimeAnimatorController animatorController;

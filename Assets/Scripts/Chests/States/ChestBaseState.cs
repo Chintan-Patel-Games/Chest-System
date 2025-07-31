@@ -1,10 +1,12 @@
+using ChestSystem.Chests.ChestSlot;
+
 namespace ChestSystem.Chests.States
 {
     public abstract class ChestBaseState
     {
-        protected ChestController controller;
+        protected ChestSlotController controller;
 
-        public ChestBaseState(ChestController controller) => this.controller = controller;
+        public ChestBaseState(ChestSlotController controller) => this.controller = controller;
 
         public virtual void EnterState() { }
         public virtual void OnChestClicked() { }

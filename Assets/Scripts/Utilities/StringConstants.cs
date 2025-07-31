@@ -17,5 +17,13 @@ namespace ChestSystem.Utilities
             string.Format("{0:D2}:00", remaining.Minutes);
         public static string GetFormattedRemainingTimeHours(TimeSpan remaining) =>
             string.Format("{0:D2}:{1:D2}:{2:D2}", remaining.Hours, remaining.Minutes, remaining.Seconds);
+
+        public static string FormatRemainingTime(TimeSpan remaining)
+        {
+            if (remaining.TotalMinutes <= 30)
+                return $"{remaining.Minutes:D2}:{remaining.Seconds:D2}"; // MM:SS
+            else
+                return $"{(int)remaining.TotalHours:D2}:{remaining.Minutes:D2}:{remaining.Seconds:D2}"; // HH:MM:SS
+        }
     }
 }

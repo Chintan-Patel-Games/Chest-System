@@ -2,7 +2,6 @@ using ChestSystem.Events;
 using ChestSystem.Chests;
 using ChestSystem.UI;
 using ChestSystem.Utilities;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ChestSystem.Main
@@ -16,16 +15,17 @@ namespace ChestSystem.Main
         [SerializeField] private UIService uiService;
         public UIService UIService => uiService;
 
-        [SerializeField] private ChestSlotView chestSlotPrefab;
-        [SerializeField] private ChestView chestPrefab;
-        [SerializeField] private Transform chestSlotTransform;
-        [SerializeField] private List<ChestScriptableObject> chestSOs;
-
         protected override void Awake()
         {
             base.Awake();
             EventService = new EventService();
-            ChestService = new ChestService(chestSlotPrefab, chestSlotTransform, chestPrefab);
+            ChestService = new ChestService();
+        }
+
+        private void Start()
+        {
+            // Initialize services
+            ChestService.Initialize();
         }
     }
 }
