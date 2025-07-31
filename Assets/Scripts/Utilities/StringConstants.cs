@@ -15,6 +15,9 @@ namespace ChestSystem.Utilities
 
         public const string UnlockChestWarning = "Can only unlock one chest at a time!";
         public const string NotEnoughGemsWarning = "Not enough gems to unlock this chest!";
+        public const string ChestAddedInQueue = "Chest added to unlock queue.";
+        public const string ChestAlreadyInQueue = "This chest is already in the unlock queue.";
+        public static string WebGLCloseGamePopup = "Cannot quit the game in WebGL. Please close the tab or window.";
 
         public static string GetFormattedRemainingTimeMinutes(TimeSpan remaining) =>
             string.Format("{0:D2}:00", remaining.Minutes);

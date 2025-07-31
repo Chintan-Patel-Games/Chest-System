@@ -9,47 +9,44 @@ namespace ChestSystem.Chests.ChestSlot
 {
     public class ChestSlotView : MonoBehaviour
     {
-        [SerializeField] private ChestView chestPrefab;
-        [SerializeField] private Button chestSlotButton;
+        [SerializeField] private ChestView chestView;
         [SerializeField] private Transform chestViewPlaceholder;
+        [SerializeField] private GameObject openChestPlaceholder;
+        [SerializeField] private Button chestSlotButton;
         [SerializeField] private ChestBgImg[] chestBgImages;
         [SerializeField] private TextMeshProUGUI emptyText;
         [SerializeField] private TextMeshProUGUI lockedText;
         [SerializeField] private TextMeshProUGUI unlockingText;
+        [SerializeField] private TextMeshProUGUI gemText;
         [SerializeField] private TextMeshProUGUI unlockedText;
         [SerializeField] private TextMeshProUGUI unlockTimerText;
         [SerializeField] private TextMeshProUGUI chestTypeText;
 
-        private ChestController chestController;
-        private ChestView chestView;
-
         private Coroutine unlockTimerCoroutine;
 
-        public void SetController(ChestSlotController controller)
+        private void Awake()
+        {
+            chestView = chestViewPlaceholder.GetComponentInChildren<ChestView>();
+            chestView.gameObject.SetActive(false);
+            openChestPlaceholder.SetActive(false);
+        }
+
+        public void SubscribeToButtons(ChestSlotController controller)
         {
             chestSlotButton.onClick.RemoveAllListeners();
             chestSlotButton.onClick.AddListener(() => controller.OnSlotClicked());
         }
 
-        public ChestSlotView CreateChest(ChestSO chestSO)
+        public ChestSlotView ActivateChestView(ChestType chestType)
         {
-            chestView = Instantiate(chestPrefab, chestViewPlaceholder);
-            chestController = new ChestController(chestSO, chestView);
-            SetBgImg();
+            chestView.gameObject.SetActive(true);
+            SetBgImg(chestType);
             return this;
         }
 
-        public void RemoveChestView()
-        {
-            if (chestView != null)
-            {
-                Destroy(chestView.gameObject);
-                chestController = null;
-                chestView = null;
-            }
-        }
+        public void DeactivateChestView() => chestView.gameObject.SetActive(false);
 
-        public void SlotEmptyState()
+        public void SetEmptyStateView()
         {
             emptyText.gameObject.SetActive(true);
             lockedText.gameObject.SetActive(false);
@@ -60,75 +57,49 @@ namespace ChestSystem.Chests.ChestSlot
             chestSlotButton.interactable = false;
         }
 
-        public void SlotLockedState()
+        public void SetLockedStateView(int totalMinutes, string chestTypeText)
         {
             emptyText.gameObject.SetActive(false);
             lockedText.gameObject.SetActive(true);
             unlockedText.gameObject.SetActive(false);
-            SetTimerText();
+            SetTimerText(totalMinutes);
             unlockTimerText.gameObject.SetActive(true);
-            SetChestTypeText();
-            chestTypeText.gameObject.SetActive(true);
+            this.chestTypeText.text = chestTypeText;
+            this.chestTypeText.gameObject.SetActive(true);
             chestSlotButton.interactable = true;
         }
 
-        public void SlotUnlockingState()
+        public void SetUnlockingStateView()
         {
             lockedText.gameObject.SetActive(false);
             unlockingText.gameObject.SetActive(true);
+            openChestPlaceholder.SetActive(true);
         }
 
-        public void SlotUnlockedState()
+        public void SetUnlockedStateView()
         {
             lockedText.gameObject.SetActive(false);
             unlockingText.gameObject.SetActive(false);
             unlockedText.gameObject.SetActive(true);
             unlockTimerText.gameObject.SetActive(false);
             chestTypeText.gameObject.SetActive(true);
+            openChestPlaceholder.SetActive(false);
         }
 
-        public bool IsEmpty() => emptyText.gameObject.activeSelf;
-
-        public void SetTimerText()
+        public void SetTimerText(int totalMinutes)
         {
-            if (chestController == null) return;
-            var chestData = chestController.GetChestData();
-            int totalMinutes = (int)chestData.unlockDurationMinutes;
             TimeSpan fullDuration = TimeSpan.FromMinutes(totalMinutes);
             string formattedTime = StringConstants.FormatRemainingTime(fullDuration);
             unlockTimerText.text = formattedTime;
         }
 
-        public void SetChestTypeText()
-        {
-            if (chestController == null) return;
-            var chestData = chestController.GetChestData();
+        private void SetGemText(int totalGems) => gemText.text = totalGems.ToString();
 
-            switch (chestData.chestType)
-            {
-                case ChestType.COMMON:
-                    chestTypeText.text ="Common";
-                    return;
-                case ChestType.EPIC:
-                    chestTypeText.text = "Epic";
-                    return;
-                case ChestType.RARE:
-                    chestTypeText.text = "Rare";
-                    return;
-                case ChestType.LEGENDARY:
-                    chestTypeText.text = "Legendary";
-                    return;
-                default:
-                    chestTypeText.text = "Unknown";
-                    return;
-            }
-        }
-
-        public void SetBgImg()
+        public void SetBgImg(ChestType chestType)
         {
             foreach (var bgImg in chestBgImages)
             {
-                if (bgImg.chestType == chestController.GetChestData().chestType)
+                if (bgImg.chestType == chestType)
                 {
                     // Set background image
                     gameObject.GetComponent<Image>().sprite = bgImg.bgImage;
@@ -143,20 +114,23 @@ namespace ChestSystem.Chests.ChestSlot
             }
         }
 
-        public void StartUnlockTimer(Func<TimeSpan> getRemainingTime, Action onFinished)
+        public void StartUnlockTimer(Func<TimeSpan> getRemainingTime, Func<int> getGemCost, Action onFinished)
         {
             if (unlockTimerCoroutine != null)
                 StopCoroutine(unlockTimerCoroutine);
 
-            unlockTimerCoroutine = StartCoroutine(RunUnlockTimer(getRemainingTime, onFinished));
+            unlockTimerCoroutine = StartCoroutine(RunUnlockTimer(getRemainingTime, getGemCost, onFinished));
         }
 
-        private IEnumerator RunUnlockTimer(Func<TimeSpan> getRemainingTime, Action onFinished)
+        private IEnumerator RunUnlockTimer(Func<TimeSpan> getRemainingTime, Func<int> getGemCost, Action onFinished)
         {
             while (true)
             {
                 TimeSpan remaining = getRemainingTime();
                 unlockTimerText.text = StringConstants.FormatRemainingTime(remaining);
+
+                int gemCost = getGemCost();
+                SetGemText(gemCost);
 
                 if (remaining.TotalSeconds <= 0)
                 {
@@ -175,19 +149,18 @@ namespace ChestSystem.Chests.ChestSlot
             unlockTimerCoroutine = null;
         }
 
-        public void ResetTimer()
+        public void ResetTimer(int totalMinutes)
         {
             StopUnlockTimer();
-            SetTimerText();
+            SetTimerText(totalMinutes);
         }
 
-        public ChestController GetChestController() => chestController;
+        public ChestView ChestView => chestView;
 
         public void OnDestroy()
         {
             chestSlotButton.onClick.RemoveAllListeners();
             StopUnlockTimer();
-            chestController = null;
         }
     }
 

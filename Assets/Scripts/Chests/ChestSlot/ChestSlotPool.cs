@@ -1,5 +1,4 @@
 using ChestSystem.Chests.States.ConcreateStates;
-using ChestSystem.Main;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,9 +16,7 @@ namespace ChestSystem.Chests.ChestSlot
 
             for (int i = 0; i < maxSlots; i++)
             {
-                ChestSlotView view = GameService.Instance.UIService.AddNewSlot();
-                controller = new ChestSlotController(view);
-                view.SetController(controller);
+                controller = new ChestSlotController();
                 slotList.Add(controller);
             }
         }
@@ -49,7 +46,7 @@ namespace ChestSystem.Chests.ChestSlot
         private ChestSlotController GetFirstEmptySlot()
         {
             foreach (var slot in slotList)
-                if (slot.IsEmpty()) return slot;
+                if (slot.IsSlotEmpty()) return slot;
 
             return null; // No available slot
         }

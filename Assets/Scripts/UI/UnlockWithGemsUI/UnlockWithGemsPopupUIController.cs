@@ -2,15 +2,15 @@ using ChestSystem.Chests.ChestSlot;
 using ChestSystem.Main;
 using ChestSystem.Utilities;
 
-namespace ChestSystem.UI.UnlockChestPopupUI
+namespace ChestSystem.UI.UnlockWithGemsPopupUI
 {
-    public class UnlockChestPopupUIController : IUIController
+    public class UnlockWithGemsPopupUIController : IUIController
     {
-        private UnlockChestPopupUIView view;
+        private UnlockwithGemsPopupUIView view;
         private ChestSlotController targetSlot;
         private int unlockCost;
 
-        public UnlockChestPopupUIController(UnlockChestPopupUIView view)
+        public UnlockWithGemsPopupUIController(UnlockwithGemsPopupUIView view)
         {
             this.view = view;
             view.SetController(this);
@@ -18,22 +18,6 @@ namespace ChestSystem.UI.UnlockChestPopupUI
         }
 
         public void SetTargetSlot(ChestSlotController controller) => targetSlot = controller;
-
-        public void OnUnlockWithTimerClicked()
-        {
-            if (GameService.Instance.ChestUnlockQueueService.IsChestAlreadyInQueue(targetSlot))
-            {
-                GameService.Instance.UIService.ShowWarningPopupUI(StringConstants.ChestAlreadyInQueue);
-                return;
-            }
-
-            if (GameService.Instance.ChestUnlockQueueService.IsAnyChestUnlocking())
-                GameService.Instance.UIService.ShowMessagePopupUI(StringConstants.ChestAddedInQueue);
-
-            GameService.Instance.EventService.OnUnlockWithTimer.InvokeEvent(targetSlot);
-            UnlockRaycastBlock();
-            Hide();
-        }
 
         public void OnUnlockWithGemsClicked()
         {
@@ -44,6 +28,7 @@ namespace ChestSystem.UI.UnlockChestPopupUI
             }
 
             GameService.Instance.EventService.OnUnlockWithGems.InvokeEvent(targetSlot);
+            GameService.Instance.EventService.OnChestReadyToOpen.InvokeEvent(targetSlot);
             GameService.Instance.CurrencyService.RemoveGems(unlockCost);
             UnlockRaycastBlock();
             Hide();

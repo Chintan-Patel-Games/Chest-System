@@ -6,6 +6,8 @@ namespace ChestSystem.UI.MessagePopupUI
 {
     public class MessagePopupUIView : MonoBehaviour, IUIView
     {
+        [SerializeField] private GameObject warningTxt;
+        [SerializeField] private GameObject messageTxt;
         [SerializeField] private TextMeshProUGUI message;
         [SerializeField] private Button closePopup;
 
@@ -20,6 +22,20 @@ namespace ChestSystem.UI.MessagePopupUI
         private void SubscribeToButtonClicks() => closePopup.onClick.AddListener(controller.OnClosePopup);
 
         public void SetMessageText(string message) => this.message.text = message;
+
+        public void EnableWarningView()
+        {
+            warningTxt.SetActive(true);
+            messageTxt.SetActive(false);
+            EnableView();
+        }
+
+        public void EnableMessageView()
+        {
+            warningTxt.SetActive(false);
+            messageTxt.SetActive(true);
+            EnableView();
+        }
 
         public void EnableView() => gameObject.SetActive(true);
 

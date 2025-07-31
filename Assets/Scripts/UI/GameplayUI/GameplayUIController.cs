@@ -15,6 +15,8 @@ namespace ChestSystem.UI.GameplayUI
 
         public void OnGenerateChestClicked() => GameService.Instance.EventService.OnGenerateChest.InvokeEvent();
 
+        public void OnExitGameClicked() => GameService.Instance.UIService.ShowExitPopupUI();
+
         public void UpdateCoinsText(int totalCoins) => view.UpdateCoinsText(totalCoins);
 
         public void UpdateGemsText(int totalGems) => view.UpdateGemsText(totalGems);

@@ -9,7 +9,7 @@ namespace ChestSystem.Chests.States
         public ChestBaseState(ChestSlotController controller) => this.controller = controller;
 
         public virtual void EnterState() { }
-        public virtual void OnChestClicked() { }
+        public virtual void OnSlotClicked() { }
         public virtual void UpdateState() { }
     }
 }
