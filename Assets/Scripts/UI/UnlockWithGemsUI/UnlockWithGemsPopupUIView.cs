@@ -2,26 +2,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ChestSystem.UI.UnlockChestPopupUI
+namespace ChestSystem.UI.UnlockWithGemsPopupUI
 {
-    public class UnlockChestPopupUIView : MonoBehaviour, IUIView
+    public class UnlockwithGemsPopupUIView : MonoBehaviour, IUIView
     {
-        [SerializeField] private Button unlockWithTimer;
         [SerializeField] private Button unlockWithGems;
         [SerializeField] private TextMeshProUGUI gemsText;
         [SerializeField] private Button closePopup;
 
-        private UnlockChestPopupUIController controller;
+        private UnlockWithGemsPopupUIController controller;
 
         public void SetController(IUIController controllerToSet)
         {
-            controller = controllerToSet as UnlockChestPopupUIController;
+            controller = controllerToSet as UnlockWithGemsPopupUIController;
             SubscribeToButtonClicks();
         }
 
         private void SubscribeToButtonClicks()
         {
-            unlockWithTimer.onClick.AddListener(controller.OnUnlockWithTimerClicked);
             unlockWithGems.onClick.AddListener(controller.OnUnlockWithGemsClicked);
             closePopup.onClick.AddListener(controller.OnCloseButtonClicked);
         }

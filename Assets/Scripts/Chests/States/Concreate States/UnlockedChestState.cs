@@ -9,7 +9,7 @@ namespace ChestSystem.Chests.States.ConcreateStates
 
         public override void EnterState() => controller.SlotUnlockedState();
 
-        public override void OnChestClicked()
+        public override void OnSlotClicked()
         {
             GameService.Instance.UIService.SetTargetSlotForCollect(controller);
             GameService.Instance.UIService.ShowCollectChestPopupUI();

@@ -12,6 +12,12 @@ namespace ChestSystem.Currency
         {
             coins = initialCoins;
             gems = initialGems;
+
+            UpdateUI();
+        }
+
+        private void UpdateUI()
+        {
             GameService.Instance.UIService.UpdateCoinsText(coins);
             GameService.Instance.UIService.UpdateGemsText(gems);
         }

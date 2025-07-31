@@ -1,3 +1,4 @@
+using ChestSystem.Main;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ namespace ChestSystem.UI.GameplayUI
         [SerializeField] private TextMeshProUGUI coinsText;
         [SerializeField] private TextMeshProUGUI gemsText;
         [SerializeField] private Button generateChestButton;
+        [SerializeField] private Button exitGameButton;
 
         private GameplayUIController controller;
 
@@ -19,7 +21,11 @@ namespace ChestSystem.UI.GameplayUI
             SubscribeToButtonClicks();
         }
 
-        private void SubscribeToButtonClicks() => generateChestButton.onClick.AddListener(controller.OnGenerateChestClicked);
+        private void SubscribeToButtonClicks()
+        {
+            generateChestButton.onClick.AddListener(controller.OnGenerateChestClicked);
+            exitGameButton.onClick.AddListener(controller.OnExitGameClicked);
+        }
 
         public void UpdateCoinsText(int totalCoins) => coinsText.text = totalCoins.ToString();
 

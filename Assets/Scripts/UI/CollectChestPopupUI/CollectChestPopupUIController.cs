@@ -1,6 +1,5 @@
 using ChestSystem.Chests.ChestSlot;
 using ChestSystem.Main;
-using UnityEngine;
 
 namespace ChestSystem.UI.CollectChestPopupUI
 {
@@ -20,7 +19,6 @@ namespace ChestSystem.UI.CollectChestPopupUI
 
         public void OnUndoUnlockClicked()
         {
-            Debug.Log("Undo button clicked");
             GameService.Instance.CommandInvoker.Undo();
             GameService.Instance.EventService.OnUndo.InvokeEvent(targetSlot);
             UnlockRaycastBlock();

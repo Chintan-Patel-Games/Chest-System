@@ -3,31 +3,27 @@ using ChestSystem.Chests.States.ConcreateStates;
 using ChestSystem.Command;
 using ChestSystem.Main;
 using System;
-using UnityEngine;
 
 namespace ChestSystem.Chests.ChestSlot
 {
     public class ChestSlotController
     {
-        private DateTime unlockStartTime;
-
         private ChestSlotView view;
-
         private ChestBaseState currentState;
         private ChestController chestController;
-        private ChestSO chestData;
+        private DateTime unlockStartTime;
 
-        public ChestSlotController(ChestSlotView view)
+        public ChestSlotController()
         {
-            this.view = view;
-            view.SetController(this);
+            view = GameService.Instance.UIService.AddNewSlot();
+            view.SubscribeToButtons(this);
             SetState(new EmptyChestState(this));
             SubscribeToEvents();
         }
 
         private void SubscribeToEvents()
         {
-            GameService.Instance.EventService.OnUnlockWithTimer.AddListener(StartUnlocking);
+            GameService.Instance.EventService.OnUnlockWithTimer.AddListener(TryUnlockChest);
             GameService.Instance.EventService.OnUnlockWithGems.AddListener(FinishUnlocking);
             GameService.Instance.EventService.OnUnlockWithGems.AddListener(RegisterUndoCommand);
             GameService.Instance.EventService.OnChestRemove.AddListener(RemoveChest);
@@ -36,7 +32,7 @@ namespace ChestSystem.Chests.ChestSlot
 
         private void UnSubscribeToEvents()
         {
-            GameService.Instance.EventService.OnUnlockWithTimer.RemoveListener(StartUnlocking);
+            GameService.Instance.EventService.OnUnlockWithTimer.RemoveListener(TryUnlockChest);
             GameService.Instance.EventService.OnUnlockWithGems.RemoveListener(FinishUnlocking);
             GameService.Instance.EventService.OnUnlockWithGems.RemoveListener(RegisterUndoCommand);
             GameService.Instance.EventService.OnChestRemove.RemoveListener(RemoveChest);
@@ -45,37 +41,40 @@ namespace ChestSystem.Chests.ChestSlot
 
         public void AssignChest(ChestSO chestSO)
         {
-            ChestSlotView createdView = view.CreateChest(chestSO);
-            chestController = createdView.GetChestController();
-            chestData = chestSO;
+            view.ActivateChestView(chestSO.chestType);
+            chestController = new ChestController(chestSO, view.ChestView);
 
             SetState(new LockedChestState(this));
         }
 
-        public void OnSlotClicked()
+        // Setting Slot States
+        public void SlotEmptyState() => view.SetEmptyStateView();
+
+        public void SlotLockedState()
         {
-            currentState.OnChestClicked();
-            Debug.Log("Chest Slot Clicked: " + currentState);
+            int totalMinutes = (int)chestController.ChestData.unlockDurationMinutes;
+            string chestTypeText = chestController.GetChestTypeText();
+            view.SetLockedStateView(totalMinutes, chestTypeText);
         }
+
+        public void SlotUnlockingState() => view.SetUnlockingStateView();
+
+        public void SlotUnlockedState() => view.SetUnlockedStateView();
+
+        public void OnSlotClicked() => currentState.OnSlotClicked();
 
         public void UpdateState() => currentState.UpdateState();
 
-        public void SlotEmptyState() => view.SlotEmptyState();
-
-        public void SlotLockedState() => view.SlotLockedState();
-
-        public void SlotUnlockingState() => view.SlotUnlockingState();
-
-        public void SlotUnlockedState() => view.SlotUnlockedState();
+        public void TryUnlockChest(ChestSlotController target)
+        {
+            if (target == this)
+                GameService.Instance.ChestUnlockQueueService.TryUnlockChest(this);
+        }
 
         public void StartUnlocking(ChestSlotController target)
         {
-            if (target == this && target.currentState is LockedChestState)
-            {
-                unlockStartTime = DateTime.UtcNow;
-                SetState(new UnlockingChestState(this));
-                StartTimer();
-            }
+            SetState(new UnlockingChestState(this));
+            StartTimer();
         }
 
         public void RegisterUndoCommand(ChestSlotController target)
@@ -90,10 +89,11 @@ namespace ChestSystem.Chests.ChestSlot
             }
         }
 
-        public void ResetTimer() => view.ResetTimer();
+        public void ResetTimer() => view.ResetTimer((int)chestController.ChestData.unlockDurationMinutes);
 
         private void StartTimer()
         {
+            unlockStartTime = DateTime.UtcNow;
             TimeSpan remainingTime = GetRemainingUnlockTime();
 
             if (remainingTime.TotalSeconds <= 0)
@@ -102,7 +102,7 @@ namespace ChestSystem.Chests.ChestSlot
                 return;
             }
 
-            view.StartUnlockTimer(GetRemainingUnlockTime, () => FinishUnlocking(this));
+            view.StartUnlockTimer(GetRemainingUnlockTime, () => chestController.CalculateUnlockCost(remainingTime), () => FinishUnlocking(this));
         }
 
         public void FinishUnlocking(ChestSlotController target)
@@ -114,41 +114,31 @@ namespace ChestSystem.Chests.ChestSlot
             }
         }
 
-        public void NotifyChestReady() => GameService.Instance.EventService.OnChestReadyToOpen.InvokeEvent();
-
         public void CollectChest(ChestSlotController target)
         {
             if (target == this && target.currentState is UnlockedChestState)
             {
-                GetRandomReward(out int totalCoins, out int totalGems);
+                chestController.CollectChestRewards(out int totalCoins, out int totalGems);
+                GameService.Instance.UIService.SetTargetSlotForRewards(this);
                 GameService.Instance.UIService.ShowRewardsPopupUI(totalCoins, totalGems);
-                GameService.Instance.UIService.SetTargetSlotForRemove(this);
                 GameService.Instance.CurrencyService.AddCoins(totalCoins);
                 GameService.Instance.CurrencyService.AddGems(totalGems);
             }
-        }
-
-        private void GetRandomReward(out int coins, out int gems)
-        {
-            coins = UnityEngine.Random.Range(chestData.coins.min, chestData.coins.max + 1);
-            gems = UnityEngine.Random.Range(chestData.gems.min, chestData.gems.max + 1);
         }
 
         public void RemoveChest(ChestSlotController target)
         {
             if (target == this)
             {
-                view.RemoveChestView();
-                chestData = null;
+                view.DeactivateChestView();
                 SetState(new EmptyChestState(this));
             }
         }
 
         public TimeSpan GetRemainingUnlockTime()
         {
-            var duration = TimeSpan.FromMinutes((int)chestData.unlockDurationMinutes);
-            if (unlockStartTime == default)
-                return duration; // Assume full time if timer hasn't started
+            var duration = TimeSpan.FromMinutes((int)chestController.ChestData.unlockDurationMinutes);
+            if (unlockStartTime == default) return duration; // Assume full time if timer hasn't started
 
             var elapsed = DateTime.UtcNow - unlockStartTime;
             var remaining = duration - elapsed;
@@ -159,34 +149,22 @@ namespace ChestSystem.Chests.ChestSlot
         public bool HasUnlockTimePassed()
         {
             var elapsed = DateTime.UtcNow - unlockStartTime;
-            return elapsed.TotalMinutes >= ConvertUnlockTimerinMinutes(chestData.unlockDurationMinutes);
+            return elapsed.TotalMinutes >= ConvertUnlockTimerinMinutes(chestController.ChestData.unlockDurationMinutes);
         }
 
         private int ConvertUnlockTimerinMinutes(ChestUnlockTimer chestUnlockTimer) => (int)chestUnlockTimer;
 
-        public int CalculateUnlockCost() => chestController.CalculateGemCost(GetRemainingUnlockTime());
+        public int CalculateUnlockCost() => chestController.CalculateUnlockCost(GetRemainingUnlockTime());
 
         public void SetState(ChestBaseState newState)
         {
-            Debug.Log("Current State: " + currentState);
             currentState = newState;
             currentState.EnterState();
-            Debug.Log("New State: " + currentState);
         }
 
         public ChestBaseState GetCurrentState() => currentState;
 
-        public bool IsEmpty() => currentState is EmptyChestState;
-
-        public void RevertToState(ChestBaseState previousState, TimeSpan remainingTime)
-        {
-            if (previousState is UnlockingChestState)
-            {
-                SlotLockedState();
-                SetState(new LockedChestState(this));
-                remainingTime = GetRemainingUnlockTime();
-            }
-        }
+        public bool IsSlotEmpty() => currentState is EmptyChestState;
 
         ~ChestSlotController() => UnSubscribeToEvents();
     }

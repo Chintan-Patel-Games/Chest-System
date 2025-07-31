@@ -1,10 +1,11 @@
 using ChestSystem.Events;
 using ChestSystem.Chests;
 using ChestSystem.Command;
+using ChestSystem.Currency;
 using ChestSystem.UI;
 using ChestSystem.Utilities;
 using UnityEngine;
-using ChestSystem.Currency;
+using ChestSystem.Chests.ChestUnlockQueue;
 
 namespace ChestSystem.Main
 {
@@ -18,6 +19,7 @@ namespace ChestSystem.Main
         // Services:
         public EventService EventService { get; private set; }
         public ChestService ChestService { get; private set; }
+        public ChestUnlockQueueService ChestUnlockQueueService { get; private set; }
         public CurrencyService CurrencyService { get; private set; }
         public CommandInvoker CommandInvoker { get; private set; }
 
@@ -29,6 +31,7 @@ namespace ChestSystem.Main
             base.Awake();
             EventService = new EventService();
             ChestService = new ChestService();
+            ChestUnlockQueueService = new ChestUnlockQueueService();
             CurrencyService = new CurrencyService();
             CommandInvoker = new CommandInvoker();
         }
@@ -40,5 +43,17 @@ namespace ChestSystem.Main
         }
 
         private void Update() => ChestService.UpdateChest();
+
+        public void OnExitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_WEBGL
+            UnblockRaycasts();
+            UIService.ShowMessagePopupUI(StringConstants.WebGLCloseGamePopup);
+#else
+            Application.Quit();
+#endif
+        }
     }
 }

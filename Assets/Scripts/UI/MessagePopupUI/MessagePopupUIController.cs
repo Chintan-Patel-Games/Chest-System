@@ -13,11 +13,7 @@ namespace ChestSystem.UI.MessagePopupUI
             Hide();
         }
 
-        public void SetMessageText(string message)
-        {
-            view.SetMessageText(message);
-            Show();
-        }
+        public void SetMessageText(string message) => view.SetMessageText(message);
 
         public void OnClosePopup()
         {
@@ -27,7 +23,17 @@ namespace ChestSystem.UI.MessagePopupUI
 
         private void UnlockRaycastBlock() => GameService.Instance.UIService.SetUIRaycastBlock(true);
 
-        public void Show() => view.EnableView();
+        public void ShowWarningPopup(string message)
+        {
+            view.EnableWarningView();
+            SetMessageText(message);
+        }
+
+        public void ShowMessagePopup(string message)
+        {
+            view.EnableMessageView();
+            SetMessageText(message);
+        }
 
         public void Hide() => view.DisableView();
     }

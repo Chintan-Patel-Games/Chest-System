@@ -10,15 +10,15 @@ namespace ChestSystem.Chests.States.ConcreateStates
 
         public override void EnterState() => controller.SlotLockedState();
 
-        public override void OnChestClicked()
+        public override void OnSlotClicked()
         {
-            if (!GameService.Instance.ChestService.CanUnlockChest) // Calling ChestService to check available slots in ChestSlotPool
+            if (!GameService.Instance.ChestService.CanUnlockChest && !GameService.Instance.ChestUnlockQueueService.IsAnyChestUnlocking()) // Calling ChestService to check available slots in ChestSlotPool
             {
                 GameService.Instance.UIService.ShowMessagePopupUI(StringConstants.UnlockChestWarning);
                 return;
             }
 
-            GameService.Instance.UIService.SetTargetSlotForOnClick(controller);
+            GameService.Instance.UIService.SetTargetSlotForUnlock(controller);
             GameService.Instance.UIService.ShowUnlockChestPopupUI(controller.CalculateUnlockCost());
         }
     }
