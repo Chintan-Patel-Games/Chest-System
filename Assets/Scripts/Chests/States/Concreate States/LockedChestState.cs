@@ -1,5 +1,6 @@
 using ChestSystem.Chests.ChestSlot;
 using ChestSystem.Main;
+using ChestSystem.Utilities;
 
 namespace ChestSystem.Chests.States.ConcreateStates
 {
@@ -11,8 +12,14 @@ namespace ChestSystem.Chests.States.ConcreateStates
 
         public override void OnChestClicked()
         {
-            GameService.Instance.UIService.SetTargetSlot(controller);
-            GameService.Instance.UIService.ShowPopupUI();
+            if (!GameService.Instance.ChestService.CanUnlockChest) // Calling ChestService to check available slots in ChestSlotPool
+            {
+                GameService.Instance.UIService.ShowMessagePopupUI(StringConstants.UnlockChestWarning);
+                return;
+            }
+
+            GameService.Instance.UIService.SetTargetSlotForOnClick(controller);
+            GameService.Instance.UIService.ShowUnlockChestPopupUI(controller.CalculateUnlockCost());
         }
     }
 }

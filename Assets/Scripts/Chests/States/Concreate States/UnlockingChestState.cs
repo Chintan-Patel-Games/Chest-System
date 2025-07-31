@@ -1,4 +1,5 @@
 using ChestSystem.Chests.ChestSlot;
+using ChestSystem.Main;
 
 namespace ChestSystem.Chests.States.ConcreateStates
 {
@@ -8,18 +9,15 @@ namespace ChestSystem.Chests.States.ConcreateStates
 
         public override void EnterState() => controller.SlotUnlockingState();
 
+        public override void OnChestClicked() => GameService.Instance.UIService.ShowUnlockWithGemsUI(controller.CalculateUnlockCost());
+
         public override void UpdateState()
         {
-            //if (controller.HasUnlockTimePassed())
-            //{
-            //    controller.SetState(new UnlockedChestState(controller));
-            //    controller.NotifyChestReady();
-            //}
-        }
-
-        public override void OnChestClicked()
-        {
-            // Optionally show timer progress or locked message
+            if (controller.HasUnlockTimePassed())
+            {
+                controller.SetState(new UnlockedChestState(controller));
+                controller.NotifyChestReady();
+            }
         }
     }
 }

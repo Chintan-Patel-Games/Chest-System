@@ -18,11 +18,17 @@ namespace ChestSystem.UI.RewardsPopupUI
             SubscribeToButtonClicks();
         }
 
-        public void SetCoinsText(int coins) => coinsText.text = coins.ToString();
+        public void SetCurrencyText(int totalCoins, int totalGems)
+        {
+            coinsText.text = totalCoins.ToString();
+            gemsText.text = totalGems.ToString();
+        }
 
-        public void SetGemsText(int gems) => gemsText.text = gems.ToString();
-
-        private void SubscribeToButtonClicks() => closePopup.onClick.AddListener(DisableView);
+        private void SubscribeToButtonClicks()
+        {
+            closePopup.onClick.RemoveAllListeners();
+            closePopup.onClick.AddListener(controller.OnCloseButtonClicked);
+        }
 
         public void EnableView() => gameObject.SetActive(true);
 

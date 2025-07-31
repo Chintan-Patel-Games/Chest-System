@@ -1,8 +1,12 @@
+using ChestSystem.Chests.ChestSlot;
+using ChestSystem.Main;
+
 namespace ChestSystem.UI.RewardsPopupUI
 {
     public class RewardsPopupUIController : IUIController
     {
         private RewardsPopupUIView view;
+        private ChestSlotController targetSlot;
 
         public RewardsPopupUIController(RewardsPopupUIView view)
         {
@@ -11,11 +15,18 @@ namespace ChestSystem.UI.RewardsPopupUI
             Hide();
         }
 
-        public void SetRewards(int coins, int gems)
+        public void SetTargetSlot(ChestSlotController controller) => targetSlot = controller;
+
+        public void SetRewards(int totalCoins, int totalGems) => view.SetCurrencyText(totalCoins, totalGems);
+
+        public void OnCloseButtonClicked()
         {
-            view.SetCoinsText(coins);
-            view.SetGemsText(gems);
+            GameService.Instance.EventService.OnChestRemove.InvokeEvent(targetSlot);
+            UnlockRaycastBlock();
+            Hide();
         }
+
+        private void UnlockRaycastBlock() => GameService.Instance.UIService.SetUIRaycastBlock(true);
 
         public void Show() => view.EnableView();
 
