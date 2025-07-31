@@ -1,5 +1,6 @@
 using ChestSystem.Chests.ChestSlot;
 using ChestSystem.Main;
+using ChestSystem.Sound;
 using ChestSystem.Utilities;
 
 namespace ChestSystem.UI.UnlockChestPopupUI
@@ -31,6 +32,7 @@ namespace ChestSystem.UI.UnlockChestPopupUI
                 GameService.Instance.UIService.ShowMessagePopupUI(StringConstants.ChestAddedInQueue);
 
             GameService.Instance.EventService.OnUnlockWithTimer.InvokeEvent(targetSlot);
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
             UnlockRaycastBlock();
             Hide();
         }
@@ -39,12 +41,13 @@ namespace ChestSystem.UI.UnlockChestPopupUI
         {
             if (targetSlot.CalculateUnlockCost() > GameService.Instance.CurrencyService.GetTotalGems())
             {
-                GameService.Instance.UIService.ShowMessagePopupUI(StringConstants.NotEnoughGemsWarning);
+                GameService.Instance.UIService.ShowWarningPopupUI(StringConstants.NotEnoughGemsWarning);
                 return;
             }
 
             GameService.Instance.EventService.OnUnlockWithGems.InvokeEvent(targetSlot);
             GameService.Instance.CurrencyService.RemoveGems(unlockCost);
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
             UnlockRaycastBlock();
             Hide();
         }
@@ -53,6 +56,7 @@ namespace ChestSystem.UI.UnlockChestPopupUI
 
         public void OnCloseButtonClicked()
         {
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_POPUP_CLOSE);
             UnlockRaycastBlock();
             Hide();
         }
@@ -64,6 +68,7 @@ namespace ChestSystem.UI.UnlockChestPopupUI
             this.unlockCost = unlockCost;
             SetGemsText(unlockCost);
             view.EnableView();
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_POPUP_OPEN);
         }
 
         public void Hide() => view.DisableView();

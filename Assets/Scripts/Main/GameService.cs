@@ -1,11 +1,12 @@
-using ChestSystem.Events;
 using ChestSystem.Chests;
+using ChestSystem.Chests.ChestUnlockQueue;
 using ChestSystem.Command;
 using ChestSystem.Currency;
+using ChestSystem.Events;
+using ChestSystem.Sound;
 using ChestSystem.UI;
 using ChestSystem.Utilities;
 using UnityEngine;
-using ChestSystem.Chests.ChestUnlockQueue;
 
 namespace ChestSystem.Main
 {
@@ -17,6 +18,7 @@ namespace ChestSystem.Main
         [SerializeField] private int initialGems;
 
         // Services:
+        public SoundService SoundService { get; private set; }
         public EventService EventService { get; private set; }
         public ChestService ChestService { get; private set; }
         public ChestUnlockQueueService ChestUnlockQueueService { get; private set; }
@@ -26,10 +28,17 @@ namespace ChestSystem.Main
         [SerializeField] private UIService uiService;
         public UIService UIService => uiService;
 
+        [SerializeField] private SoundSO soundSO;
+
+        [Header("AudioSource References")]
+        [SerializeField] private AudioSource sfxSource;
+        [SerializeField] private AudioSource bgMusicSource;
+
         protected override void Awake()
         {
             base.Awake();
             EventService = new EventService();
+            SoundService = new SoundService(soundSO, sfxSource, bgMusicSource);
             ChestService = new ChestService();
             ChestUnlockQueueService = new ChestUnlockQueueService();
             CurrencyService = new CurrencyService();
@@ -46,14 +55,13 @@ namespace ChestSystem.Main
 
         public void OnExitGame()
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#elif UNITY_WEBGL
-            UnblockRaycasts();
-            UIService.ShowMessagePopupUI(StringConstants.WebGLCloseGamePopup);
-#else
-            Application.Quit();
-#endif
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #elif UNITY_WEBGL
+                UIService.ShowMessagePopupUI(StringConstants.WebGLCloseGamePopup);
+            #else
+                Application.Quit();
+            #endif
         }
     }
 }
