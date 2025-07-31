@@ -1,5 +1,6 @@
 using ChestSystem.Chests.ChestSlot;
 using ChestSystem.Main;
+using ChestSystem.Sound;
 
 namespace ChestSystem.UI.CollectChestPopupUI
 {
@@ -21,6 +22,7 @@ namespace ChestSystem.UI.CollectChestPopupUI
         {
             GameService.Instance.CommandInvoker.Undo();
             GameService.Instance.EventService.OnUndo.InvokeEvent(targetSlot);
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
             UnlockRaycastBlock();
             Hide();
         }
@@ -28,19 +30,25 @@ namespace ChestSystem.UI.CollectChestPopupUI
         public void OnCollectRewardsClicked()
         {
             GameService.Instance.EventService.OnCollectChest.InvokeEvent(targetSlot);
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
             UnlockRaycastBlock();
             Hide();
         }
 
         public void OnCloseButtonClicked()
         {
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_POPUP_CLOSE);
             UnlockRaycastBlock();
             Hide();
         }
 
         private void UnlockRaycastBlock() => GameService.Instance.UIService.SetUIRaycastBlock(true);
 
-        public void Show() => view.EnableView();
+        public void Show()
+        {
+            view.EnableView();
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_POPUP_OPEN);
+        }
 
         public void Hide() => view.DisableView();
     }

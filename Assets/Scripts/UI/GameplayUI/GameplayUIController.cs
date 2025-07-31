@@ -1,4 +1,5 @@
 using ChestSystem.Main;
+using ChestSystem.Sound;
 
 namespace ChestSystem.UI.GameplayUI
 {
@@ -13,9 +14,17 @@ namespace ChestSystem.UI.GameplayUI
             Show();
         }
 
-        public void OnGenerateChestClicked() => GameService.Instance.EventService.OnGenerateChest.InvokeEvent();
+        public void OnGenerateChestClicked()
+        {
+            GameService.Instance.EventService.OnGenerateChest.InvokeEvent();
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
+        }
 
-        public void OnExitGameClicked() => GameService.Instance.UIService.ShowExitPopupUI();
+        public void OnExitGameClicked()
+        {
+            GameService.Instance.UIService.ShowExitPopupUI();
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
+        }
 
         public void UpdateCoinsText(int totalCoins) => view.UpdateCoinsText(totalCoins);
 

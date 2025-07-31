@@ -2,6 +2,7 @@ using ChestSystem.Chests.States;
 using ChestSystem.Chests.States.ConcreateStates;
 using ChestSystem.Command;
 using ChestSystem.Main;
+using ChestSystem.Sound;
 using System;
 
 namespace ChestSystem.Chests.ChestSlot
@@ -111,6 +112,7 @@ namespace ChestSystem.Chests.ChestSlot
             {
                 view.StopUnlockTimer();
                 SetState(new UnlockedChestState(this));
+                GameService.Instance.SoundService.PlaySoundEffects(SoundType.CHEST_UNLOCKED);
             }
         }
 
@@ -123,6 +125,7 @@ namespace ChestSystem.Chests.ChestSlot
                 GameService.Instance.UIService.ShowRewardsPopupUI(totalCoins, totalGems);
                 GameService.Instance.CurrencyService.AddCoins(totalCoins);
                 GameService.Instance.CurrencyService.AddGems(totalGems);
+                GameService.Instance.SoundService.PlaySoundEffects(SoundType.CHEST_OPEN);
             }
         }
 

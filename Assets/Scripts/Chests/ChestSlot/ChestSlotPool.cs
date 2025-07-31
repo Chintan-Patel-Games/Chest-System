@@ -1,4 +1,6 @@
 using ChestSystem.Chests.States.ConcreateStates;
+using ChestSystem.Main;
+using ChestSystem.Utilities;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,6 +30,8 @@ namespace ChestSystem.Chests.ChestSlot
             ChestSlotController emptySlot = GetFirstEmptySlot();
             if (emptySlot != null)
                 emptySlot.AssignChest(randomChest);
+            else
+                GameService.Instance.UIService.ShowWarningPopupUI(StringConstants.NoEmptySlotsAvailable);
         }
 
         public void UpdateChestSlots()

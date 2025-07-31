@@ -1,6 +1,7 @@
-using System.Collections.Generic;
 using ChestSystem.Chests.ChestSlot;
+using ChestSystem.Chests.States.ConcreateStates;
 using ChestSystem.Main;
+using System.Collections.Generic;
 
 namespace ChestSystem.Chests.ChestUnlockQueue
 {
@@ -35,13 +36,19 @@ namespace ChestSystem.Chests.ChestUnlockQueue
             if (currentlyUnlockingChest == unlockedChest)
                 currentlyUnlockingChest = null;
 
-            if (queuedChests.Count > 0)
+            while (queuedChests.Count > 0)
             {
                 var nextChest = queuedChests.Dequeue();
-                currentlyUnlockingChest = nextChest;
-                nextChest.StartUnlocking(unlockedChest);
+
+                if (nextChest.GetCurrentState() is LockedChestState) // Only start unlocking if chest is still locked
+                {
+                    currentlyUnlockingChest = nextChest;
+                    nextChest.StartUnlocking(unlockedChest);
+                    break;
+                }
             }
         }
+
 
         private void ResetQueue()
         {

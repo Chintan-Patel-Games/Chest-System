@@ -1,4 +1,5 @@
 using ChestSystem.Main;
+using ChestSystem.Sound;
 
 namespace ChestSystem.UI.ExitGamePopupUI
 {
@@ -13,11 +14,24 @@ namespace ChestSystem.UI.ExitGamePopupUI
             Hide();
         }
 
-        public void OnYesButtonClicked() => GameService.Instance.OnExitGame();
+        public void OnYesButtonClicked()
+        {
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
+            GameService.Instance.OnExitGame();
+            Hide();
+        }
 
-        public void OnExitGameClicked() => Hide();
+        public void OnExitGameClicked()
+        {
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_BUTTON_CLICK);
+            Hide();
+        }
 
-        public void Show() => view.EnableView();
+        public void Show()
+        {
+            view.EnableView();
+            GameService.Instance.SoundService.PlaySoundEffects(SoundType.UI_POPUP_OPEN);
+        }
 
         public void Hide() => view.DisableView();
     }
