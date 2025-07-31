@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b22c1444f23dfe499de77847720dbb8, type: 3}
+  m_Name: Common Chest
+  m_EditorClassIdentifier: 
+  chestSprite: {fileID: 21300000, guid: 952326841b2574044b1a9a84e17482d0, type: 3}
+  animatorController: {fileID: 22100000, guid: 08e8a23afb642554d91c39126155433c, type: 2}
+  chestType: 0
+  unlockDurationMinutes: 15
+  coins:
+    min: 100
+    max: 200
+  gems:
+    min: 10
+    max: 20
