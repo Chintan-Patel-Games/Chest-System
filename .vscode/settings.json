@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Chest System.sln"
+    "dotnet.defaultSolution": "Chest System.slnx"
 }

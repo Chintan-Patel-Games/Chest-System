@@ -49,7 +49,6 @@ namespace ChestSystem.Chests.ChestUnlockQueue
             }
         }
 
-
         private void ResetQueue()
         {
             queuedChests.Clear();

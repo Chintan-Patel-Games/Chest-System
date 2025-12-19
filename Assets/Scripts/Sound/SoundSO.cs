@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ChestSystem.Sound
 {
-    [CreateAssetMenu(fileName = "SoundScriptableObject", menuName = "ScriptableObjects/SoundScriptableObject")]
+    [CreateAssetMenu(fileName = "SoundScriptableObject", menuName = "ScriptableObjects/SoundSO")]
     public class SoundSO : ScriptableObject
     {
         public Sounds[] audioList;
